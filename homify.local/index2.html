@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Oxygen+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Weather App</title>
+  </head>
+  <body>
+    <main>
+      <!-- search bar and city name -->
+      <section class="container">
+        <div class="row">
+          <form class="col" id="search-form">
+            <input
+              type="text"
+              id="search-input"
+              aria-describedby="searchCity"
+              placeholder="Search city..."
+              class="search-form"
+              autocomplete="off"
+            />
+           
+          </form>
+          <h1
+            class="col d-flex justify-content-center align-items-center city-title"
+            id="searched-city"
+          >
+            Bucuresti , Hidrotehnica
+          </h1>
+        </div>
+        <span class="measurements">
+          <a href="#" id="celcius-link">C°</a> |
+          <a href="#" id="fahrenheit-link">F°</a>
+        </span>
+      </section>
+
+      <!-- temp and day info -->
+      <section class="current-weather">
+        <div class="container">
+          <div class="row">
+            <h1 class="col temp-title" id="current-temperature">22°</h1>
+            <div class="col todays-info">
+              <p id="current-time">11:00</p>
+              <h2 id="current-day">Today</h2>
+              <p id="weather-type">Partially sunny</p>
+            </div>
+            <div class="col d-flex align-items-center side-info">
+              <ul>
+                <!-- date JSON AICI //////////////////////////////////////////////////////-->
+                <li>Humidity: <span id="humidity"></span></li>
+                <li>Wind: <span id="wind"></span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <hr />
+      </section>
+
+      <!--5 zile de vremee-->
+      <section class="container">
+        <div class="row week-forecast">
+          <div class="col">
+            <h3>Tue</h3>
+            <br /><img
+              src="https://img.icons8.com/color-glass/42/000000/rain.png"
+            /><br />
+            <p class="weather">Rainy</p>
+            <span>22°</span>
+          </div>
+          <div class="col">
+            <h3>Wed</h3>
+            <br /><img
+              src="https://img.icons8.com/color-glass/42/000000/cloud.png"
+            /><br />
+            <p class="weather">Cloudy</p>
+            <span>23°</span>
+          </div>
+          <div class="col">
+            <h3>Thu</h3>
+            <br /><img
+              src="https://img.icons8.com/color-glass/42/000000/partly-cloudy-day.png"
+            /><br />
+            <p class="weather">Partly cloudy</p>
+            <span>19°</span>
+          </div>
+          <div class="col">
+            <h3>Fri</h3>
+            <br /><img
+              src="https://img.icons8.com/color-glass/42/000000/sun.png"
+            /><br />
+            <p class="weather">Sunny</p>
+            <span>19°</span>
+          </div>
+          <div class="col">
+            <h3>Sat</h3>
+            <br /><img
+              src="https://img.icons8.com/color-glass/42/000000/wind.png"
+            /><br />
+            <p class="weather">Windy</p>
+            <span>20°</span>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <p>
+          
+          <a href="https://github.com/Tumekab" target="_blank">Proiect realizat de Grosu George si Bosnegeanu Adrian</a
+          ><span>✌🏼</span>
+        </p>
+      </footer>
+    </main>
+    <script src="index.js"></script>
+  </body>
+</html>
