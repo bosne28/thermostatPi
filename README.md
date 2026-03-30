@@ -10,7 +10,7 @@ This project implements a closed-loop automatic control system that:
 - Reads **temperature and humidity** in real time via a DHT22 sensor
 - Compares the current temperature to a **user-defined setpoint**
 - Activates a **heating or cooling device** (simulated via red/blue LEDs) to maintain the desired comfort range
-- Exposes a **web UI** (served by NGINX + PHP-FPM on the Pi) for remote monitoring and control
+- Exposes a **web UI** for remote monitoring and control from any browser
 - Logs all readings to **CSV files** (daily & monthly) accessible online
 
 ---
@@ -32,18 +32,17 @@ This project implements a closed-loop automatic control system that:
 | Layer | Technology |
 |---|---|
 | Sensor driver | C + `DHTXXD.h` library |
-| Control algorithm | C (reads `reqtemp` file, drives GPIO) |
-| Web server | NGINX |
-| Backend | PHP-FPM |
-| Frontend | HTML + JavaScript (Gauge widget) |
-| Data logging | CSV (daily logs + monthly averages) |
+| Control algorithm | C (`test_DHTXXD.c`) |
+| Web server | NGINX + PHP-FPM |
+| Frontend | HTML + CSS + JavaScript |
+| Data logging | CSV + JSON |
 
 ---
 
 ## ⚙️ How It Works
 
 ### 1. Sensor Reading
-The DHT22 sends 40-bit packets over a single GPIO data line every 40 µs:
+The DHT22 sends 40-bit packets over a single GPIO data line:
 
 ```
 Byte 1: Humidity (integer)
@@ -53,18 +52,18 @@ Byte 4: Temperature (decimal)
 Byte 5: Checksum
 ```
 
-The C program decodes these packets using `DHTXXD.h` and writes the values to `data.json`.
+The C program decodes these via `DHTXXD.h` and writes live values to `homify.local/data.json`.
 
 ### 2. Control Logic
-- The user's desired temperature is stored in a `reqtemp` file
+- The user's desired temperature is stored in a `reqtemp` file on the server
 - A **±0.5°C dead band** prevents oscillation around the setpoint
 - Outside the dead band → red LED on (heating) or blue LED on (cooling)
 
 ### 3. Web Interface
-- A JavaScript script polls `data.json` every **3 seconds** to update the live display
+- `printData.js` polls `data.json` every **3 seconds** to update the live display
 - A colour-coded **gauge widget** shows thermal comfort level at a glance
-- Users set a new target temperature via an input box; PHP writes it to `reqtemp`
-- Daily CSV logs are served from the `/dailylogs/` folder on the web server
+- Users set a new target temperature via an input box; `index.php` writes it to `reqtemp`
+- Daily/monthly CSV logs are served from the web root and can be downloaded directly
 
 ---
 
@@ -72,8 +71,8 @@ The C program decodes these packets using `DHTXXD.h` and writes the values to `d
 
 - 🌡️ Live temperature & humidity display
 - 🎨 Dynamic gauge with comfort-indicating colours
-- 🎯 Remote setpoint input (from any browser on the network)
-- 📊 Downloadable daily/monthly CSV temperature history
+- 🎯 Remote setpoint input from any device on the network
+- 📊 Downloadable daily/monthly CSV temperature history (`daylog.csv`, `monthlog.csv`)
 
 ---
 
@@ -87,20 +86,17 @@ sudo apt install nginx php-fpm gcc git
 
 ### Clone & Build
 ```bash
-git clone https://github.com/bosne28/thermostatPi.git
+git clone https://github.com/bosne28/smart-thermostat-pi.git
 cd smart-thermostat-pi
-gcc thermostat.c -o thermostat -lDHTXXD
+gcc test_DHTXXD.c -o thermostat
 ```
-
-### Configure NGINX
-Point the web root to the project's `www/` folder and enable PHP-FPM — see `nginx.conf` in the repo for the full configuration.
 
 ### Run
 ```bash
 # Single read (debug)
 ./thermostat
 
-# Continuous read every 5 seconds
+# Continuous read every N seconds
 ./thermostat 5
 ```
 
@@ -110,13 +106,24 @@ Point the web root to the project's `www/` folder and enable PHP-FPM — see `ng
 
 ```
 smart-thermostat-pi/
-├── thermostat.c       # Sensor reading + control algorithm
-├── www/
-│   ├── index.php      # Web UI
-│   ├── settemp.php    # Handles setpoint input
-│   ├── data.json      # Live sensor data (updated by C program)
-│   └── dailylogs/     # CSV temperature history (served online)
-├── nginx.conf         # NGINX configuration example
+├── test_DHTXXD.c       # Sensor reading + GPIO control algorithm
+├── homify.local/
+│   ├── index.html      # Main web UI
+│   ├── index2.html     # Secondary UI page
+│   ├── index.php       # Handles setpoint input (writes reqtemp)
+│   ├── printData.js    # Live data polling & gauge update
+│   ├── style.css       # Styles
+│   ├── styles.css      # Styles
+│   ├── data.json       # Live sensor output (updated by C program)
+│   ├── historylog.json # History data (JSON format)
+│   ├── daylog.csv      # Current day temperature log
+│   ├── monthlog.csv    # Monthly temperature averages
+│   ├── bar.png         # UI assets
+│   ├── hum.png         # UI assets
+│   └── favicon.png     # Favicon
+├── historylog.csv      # Full history log (CSV)
+├── historylog2.csv     # Secondary history log
+├── monthlog.csv        # Monthly log (root copy)
 └── README.md
 ```
 
@@ -126,7 +133,6 @@ smart-thermostat-pi/
 
 - [Raspberry Pi Foundation](https://www.raspberrypi.com/)
 - [DHTXXD Library](https://github.com/nethoncho)
-- [NGINX Documentation](https://www.theserverside.com/)
 
 ---
 
