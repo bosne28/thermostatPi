@@ -86,8 +86,8 @@ sudo apt install nginx php-fpm gcc git
 
 ### Clone & Build
 ```bash
-git clone https://github.com/bosne28/smart-thermostat-pi.git
-cd smart-thermostat-pi
+git clone https://github.com/bosne28/thermostatPi.git
+cd thermostatPi
 gcc test_DHTXXD.c -o thermostat
 ```
 
@@ -105,7 +105,7 @@ gcc test_DHTXXD.c -o thermostat
 ## 📁 Project Structure
 
 ```
-smart-thermostat-pi/
+thermostatPi/
 ├── test_DHTXXD.c       # Sensor reading + GPIO control algorithm
 ├── homify.local/
 │   ├── index.html      # Main web UI
